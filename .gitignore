@@ -1,0 +1,25 @@
+# Visual Studio and build artifacts
+.vs/
+x64/
+Debug/
+Release/
+bin/
+obj/
+
+# Driver and build outputs
+*.sys
+*.recipe
+*.id0
+*.id1
+*.nam
+*.til
+*.cat
+
+# User files
+*.user
+*.suo
+*.vcxproj.user
+
+# Misc
+.DS_Store
+*.log
