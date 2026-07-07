@@ -17,13 +17,30 @@ A DKOM rootkit that targets Windows x64 systems. The driver hooks and modifies c
 
 ## Build Instructions
 
-1. Open `src/KmRootkit/KmRootkit.sln` in Visual Studio on a Windows machine.
+1. Open `src/KmRootkit.sln` in Visual Studio on a Windows machine.
 2. Select the `x64` platform.
 3. Build the solution in `Debug` or `Release` mode.
+4. If you receive `C1083`, install the Windows Driver Kit (WDK) and reopen the solution.
+
+## WDK Check and Build Scripts
+
+- `check-wdk.ps1` verifies MSBuild and WDK headers.
+- `build-driver.ps1` runs the WDK check and then builds `src/KmRootkit.sln`.
+- Example on Windows PowerShell:
+
+  ```powershell
+  .\check-wdk.ps1
+  .\build-driver.ps1 -Configuration Release -Platform x64
+  ```
+
+## GitHub Actions
+
+- The repository includes a Windows build workflow at `.github/workflows/build-windows.yml`.
+- It checks for MSBuild and WDK headers, then attempts to build the solution and verify the `.sys` output.
 
 ## Local Validation
 
-- On Linux, you can run a syntax-only check for source files using the compatibility header.
+- On Linux, you can still run a syntax-only check for source files using the compatibility header.
 - Example:
 
   ```bash
