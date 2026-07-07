@@ -26,6 +26,9 @@ A DKOM rootkit that targets Windows x64 systems. The driver hooks and modifies c
 
 - `check-wdk.ps1` verifies MSBuild and WDK headers.
 - `build-driver.ps1` runs the WDK check and then builds `src/KmRootkit.sln`.
+- Build output is created under:
+  - `src/KmRootkit/x64/Release/` for Release
+  - `src/KmRootkit/x64/Debug/` for Debug
 - Example on Windows PowerShell:
 
   ```powershell

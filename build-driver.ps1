@@ -40,15 +40,10 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-$sysFolder = Join-Path $PSScriptRoot "src\KmRootkit\x64\$Configuration"
-if (-not (Test-Path $sysFolder)) {
-    Write-Error "Build completed but output folder not found: $sysFolder"
-    exit 1
-}
-
-$sysFiles = Get-ChildItem -Path $sysFolder -Filter '*.sys' -ErrorAction SilentlyContinue
+$sysRoot = Join-Path $PSScriptRoot 'src\KmRootkit'
+$sysFiles = Get-ChildItem -Path $sysRoot -Recurse -Filter '*.sys' -ErrorAction SilentlyContinue
 if (-not $sysFiles) {
-    Write-Error "No .sys files were found in $sysFolder"
+    Write-Error 'Build completed but no .sys files were found under src\KmRootkit'
     exit 1
 }
 

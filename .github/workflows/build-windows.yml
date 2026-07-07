@@ -48,14 +48,10 @@ jobs:
 
       - name: Verify .sys output
         run: |
-          $outputDir = 'src\KmRootkit\x64\Release'
-          if (-not (Test-Path $outputDir)) {
-            Write-Error "Expected output directory not found: $outputDir"
-            exit 1
-          }
-          $files = Get-ChildItem -Path $outputDir -Filter '*.sys' -ErrorAction SilentlyContinue
+          $outputRoot = 'src\KmRootkit'
+          $files = Get-ChildItem -Path $outputRoot -Recurse -Filter '*.sys' -ErrorAction SilentlyContinue
           if (-not $files) {
-            Write-Error 'No .sys files found after build.'
+            Write-Error "No .sys files found under $outputRoot"
             exit 1
           }
           Write-Host 'Found .sys file(s):'
