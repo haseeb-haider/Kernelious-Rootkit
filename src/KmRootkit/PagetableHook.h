@@ -1,12 +1,15 @@
+#ifdef _WIN32
 #include <ntddk.h>
 #include<wdm.h>
 #include<intrin.h>
+#else
+#include "win_compat.h"
+#endif
 
 #define SMEP_BIT_INDEX 20
 #define SMAP_BIT_INDEX 21
 #define CR3_ZERO_MASK 0xFFFFFFFFFFULL
 #define PAGE_DIRECTORY_TABLE_OFFSET 0x028
-#define PBYTE char*
 
 #pragma pack(push, 1)
 typedef struct virtual_address_parts {

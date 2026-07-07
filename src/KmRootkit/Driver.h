@@ -1,7 +1,11 @@
 #pragma once
+#ifdef _WIN32
 #include<wdm.h>
 #include<ntddk.h>
 #include <intrin.h>
+#else
+#include "win_compat.h"
+#endif
 #include "Process.h"
 #include "SSDTHook.h"
 #include "IDTHook.h"

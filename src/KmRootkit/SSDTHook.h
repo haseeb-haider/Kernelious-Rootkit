@@ -1,9 +1,12 @@
 #pragma once
+#ifdef _WIN32
 #include<ntddk.h>
 #include<wdm.h>
 #include <ntimage.h>
 #include <intrin.h>
-#define PBYTE char*
+#else
+#include "win_compat.h"
+#endif
 #define SDT_SYMBOL L"KeServiceDescriptorTable"
 #define SSDT_ENTRY_SIZE 4
 #define PATTERN {0x48,0x89,0xa3,0x90,0x00,0x00,0x00,0x8b,0xf8,0xc1,0xef,0x07};
@@ -41,9 +44,9 @@ PBYTE get_ki_systen_service_start(PBYTE ntoskrnl_image_base);
 
 PBYTE get_sdt_address(PBYTE ki_systen_service_start_address);
 
-PLONG64 get_ssdt_base_address(PBYTE sdt_address);
+PBYTE get_ssdt_base_address(PBYTE sdt_address);
 
-PBYTE get_nt_version_function(PLONG64 ssdt_base_address, int syscall_number);
+PBYTE get_nt_version_function(PBYTE ssdt_base_address, int syscall_number);
 
 
 void write_trampoline(PBYTE hooking_function, PBYTE hooked_memory);

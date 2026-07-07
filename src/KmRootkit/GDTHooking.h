@@ -1,7 +1,11 @@
 #pragma once
+#ifdef _WIN32
 #include <Ntddk.h>
 #include <wdm.h>
 #include <intrin.h>
+#else
+#include "win_compat.h"
+#endif
 
 #pragma pack(push,1)
 typedef struct gdt_entry {

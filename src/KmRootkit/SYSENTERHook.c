@@ -33,7 +33,7 @@ void hook_sysenter_instruction(PBYTE hooking_function)
 
 void hooking_function_sysenter()
 {
-    PULONGLONG current_lstar = __readmsr(LSTAR_NUMBER);
+    ULONGLONG current_lstar = __readmsr(LSTAR_NUMBER);
     DbgPrint("current lstar is: %llu\n", current_lstar);
     __writemsr(LSTAR_NUMBER, original_lstar);
     DbgPrint("reached to the hooking fucking function :)\n");

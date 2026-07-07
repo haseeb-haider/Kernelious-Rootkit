@@ -1,9 +1,11 @@
 #pragma once
+#ifdef _WIN32
 #include<wdm.h>
 #include<ntddk.h>
 #include <intrin.h>
-
-#define PBYTE char*
+#else
+#include "win_compat.h"
+#endif
 #define STAR_NUMBER 0xC0000081
 #define LSTAR_NUMBER 0xC0000082
 #define CSTAR_NUMBER 0xC0000083

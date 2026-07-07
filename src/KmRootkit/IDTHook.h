@@ -1,8 +1,11 @@
+#ifdef _WIN32
 #include<wdm.h>
 #include<ntddk.h>
 #include <intrin.h>
+#else
+#include "win_compat.h"
+#endif
 #define IDT_ENTRY_SIZE 16
-#define PBYTE char*
 
 #pragma pack(push, 1)
 typedef struct idtr {

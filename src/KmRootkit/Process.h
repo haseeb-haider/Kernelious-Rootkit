@@ -1,15 +1,18 @@
 #pragma once 
+#ifdef _WIN32
 #include<ntddk.h>
 #include<wdm.h>
 #include <ntimage.h>
 #include <intrin.h>
+#else
+#include "win_compat.h"
+#endif
 #define PROCESS_NAME_OFFSET 0x450
 #define PROCESS_PID_OFFSET 0x2e0
 #define LIST_ENTRY_OFFSET 0x2e8
 #define THREADS_LIST_OFFSET 0x488
 
 #define MAX_HIDDEN_COUNT 100
-#define PBYTE char*
 
 
 

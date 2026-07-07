@@ -1,10 +1,13 @@
 #pragma once
-#define PBYTE char*
 #define MAX_FILES_TO_HIDE 3
+#ifdef _WIN32
 #include<ntddk.h>
 #include<wdm.h>
 #include <ntimage.h>
 #include <intrin.h>
+#else
+#include "win_compat.h"
+#endif
 #include "SSDTHook.h"
 #include "Utilities.h"
 

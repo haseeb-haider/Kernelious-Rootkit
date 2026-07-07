@@ -1,9 +1,12 @@
 #pragma once
+#ifdef _WIN32
 #include<ntddk.h>
 #include<wdm.h>
 #include <ntimage.h>
 #include <intrin.h>
-#define PBYTE char*
+#else
+#include "win_compat.h"
+#endif
 #define HUN_NANO_SEC_TO_SEC 10000000
 
 void kernel_sleep(long time_interval_sec);

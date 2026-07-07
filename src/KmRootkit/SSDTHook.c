@@ -71,17 +71,17 @@ PBYTE get_sdt_address(PBYTE ki_systen_service_start_address)
 }
 
 
-PLONG64 get_ssdt_base_address(PBYTE sdt_address)
+PBYTE get_ssdt_base_address(PBYTE sdt_address)
 {
 	psystem_descriptor_table sdt = (psystem_descriptor_table)sdt_address;
-	return sdt->system_service_descriptor_table;
+	return (PBYTE)sdt->system_service_descriptor_table;
 
 }
 
-PBYTE get_nt_version_function(PLONG64 ssdt_base_address, int syscall_number)
+PBYTE get_nt_version_function(PBYTE ssdt_base_address, int syscall_number)
 {
-	int ssdt_entry_offset = *((int*)((PBYTE)ssdt_base_address + 4*syscall_number));
-	nt_version_function_ptr = (PBYTE)((PBYTE)ssdt_base_address + (ssdt_entry_offset>>4));
+	int ssdt_entry_offset = *((int*)(ssdt_base_address + 4*syscall_number));
+	nt_version_function_ptr = (PBYTE)(ssdt_base_address + (ssdt_entry_offset>>4));
 	return nt_version_function_ptr;
 }
 
@@ -179,7 +179,7 @@ BOOLEAN hook_ssdt_with_code_cave(PCWSTR hooked_function_name, PBYTE hooking_func
 {
 	PBYTE ssdt_base_address = get_ssdt_base_address(get_sdt_address(get_ki_systen_service_start(get_ntoskrnl_base_address())));
 	int syscall_number = get_syscall_number(get_function_base_address(hooked_function_name));
-	get_nt_version_function((PULONG64)ssdt_base_address, syscall_number);
+	get_nt_version_function(ssdt_base_address, syscall_number);
 
 	PUINT32 ssdt_entry_ptr = (PUINT32)(ssdt_base_address + (SSDT_ENTRY_SIZE * syscall_number));
 	PBYTE code_cave_address = scan_for_code_cave(ssdt_base_address, MAX_DISTANCE_RVA);
