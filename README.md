@@ -12,6 +12,7 @@ A DKOM rootkit that targets Windows x64 systems. The driver hooks and modifies c
 
 - The project includes a Linux-only compatibility shim at `src/KmRootkit/win_compat.h`.
 - That shim is only for local syntax validation and does not make the driver functional on Linux.
+- The solution and project include `x64` and `ARM64` configurations, but the repo does not contain prebuilt driver binaries.
 - The actual build must be done on Windows with the appropriate kernel headers.
 
 ## Build Instructions
