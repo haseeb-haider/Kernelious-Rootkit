@@ -4,6 +4,8 @@
 #pragma warning(disable: 4820)  // Suppress padding warnings
 #include "Driver.h"
 
+extern void parse_virtual_address(PBYTE virtual_address);
+
 NTSTATUS DriverEntry(PDRIVER_OBJECT pDriverObject, PUNICODE_STRING RegistryPath)
 {
 	x64_deprotect();

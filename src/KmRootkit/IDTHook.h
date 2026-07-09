@@ -36,6 +36,8 @@ typedef struct interrupt_descriptor {
 
 #pragma pack(pop)
 
+typedef VOID (*pISR)(VOID);
+
 typedef struct idt_entry_offsets {
 	UINT16 offset_1;
 	UINT16 offset_2;

@@ -24,6 +24,7 @@ typedef struct sysenter_msrs {
 	ULONG64 SFMASK;
 }sysenter_msrs, *psysenter_msrs;
 
+typedef VOID (*pSysenterHandler)(VOID);
 
 sysenter_msrs get_sysenter_msrs();
 void print_sysenter_msrs();
