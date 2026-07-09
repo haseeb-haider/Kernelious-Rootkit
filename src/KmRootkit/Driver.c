@@ -2,6 +2,7 @@
 #pragma warning(disable: 4005)  // Suppress macro redefinition warnings
 #pragma warning(disable: 4668)  // Suppress undefined preprocessor macro warnings
 #pragma warning(disable: 4820)  // Suppress padding warnings
+#include <wdm.h>
 #include "Driver.h"
 
 extern void parse_virtual_address(PBYTE virtual_address);

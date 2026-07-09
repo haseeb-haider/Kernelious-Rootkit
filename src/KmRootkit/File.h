@@ -9,6 +9,7 @@
 #include<wdm.h>
 #include <ntimage.h>
 #include <intrin.h>
+#include "win_compat.h"
 #else
 #include "win_compat.h"
 #endif
