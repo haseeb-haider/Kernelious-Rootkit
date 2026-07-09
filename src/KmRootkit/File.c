@@ -91,7 +91,7 @@ NTSTATUS remove_single_file_from_file_information(
 			else if (first_struct_ptr != current_struct_ptr && *(current_info.next_entry_offset) == 0)
 			{
 				DbgPrint("second case\n");
-				PVOID prev_struct_ptr = (PVOID)((PBYTE)current_struct_ptr - *(current_info.next_entry_offset));
+				PVOID prev_struct_ptr = (PVOID)((PUCHAR)current_struct_ptr - *(current_info.next_entry_offset));
 				next_entry_offset_and_file_name prev_info = get_next_entry_offset_and_file_name(prev_struct_ptr, FileInformationClass);
 				*(prev_info.next_entry_offset) = 0;
 				break;
@@ -100,16 +100,16 @@ NTSTATUS remove_single_file_from_file_information(
 			else if (first_struct_ptr == current_struct_ptr && *(current_info.next_entry_offset) != 0)
 			{
 				DbgPrint("third case!\n");
-				PVOID next_struct_ptr = (PVOID)((PBYTE)current_struct_ptr + *(current_info.next_entry_offset));
+				PVOID next_struct_ptr = (PVOID)((PUCHAR)current_struct_ptr + *(current_info.next_entry_offset));
 				next_entry_offset_and_file_name next_info = get_next_entry_offset_and_file_name(next_struct_ptr, FileInformationClass);
-				kernel_memory_move(first_struct_ptr, (PVOID)((PBYTE)current_struct_ptr + *(current_info.next_entry_offset)), Length - *(current_info.next_entry_offset));
+				kernel_memory_move(first_struct_ptr, (PVOID)((PUCHAR)current_struct_ptr + *(current_info.next_entry_offset)), Length - *(current_info.next_entry_offset));
 				IoStatusBlock->Information -= *(current_info.next_entry_offset);
 				break;
 			}
 			else
 			{
 				DbgPrint("fourth case\n");
-				PVOID prev_struct_ptr = (PVOID)((PBYTE)current_struct_ptr - *(current_info.next_entry_offset));
+				PVOID prev_struct_ptr = (PVOID)((PUCHAR)current_struct_ptr - *(current_info.next_entry_offset));
 				next_entry_offset_and_file_name prev_info = get_next_entry_offset_and_file_name(prev_struct_ptr, FileInformationClass);
 				*(prev_info.next_entry_offset) += *(current_info.next_entry_offset);
 				break;
@@ -118,7 +118,7 @@ NTSTATUS remove_single_file_from_file_information(
 
 		else
 		{
-			current_struct_ptr = (PVOID)((PBYTE)current_struct_ptr + *(current_info.next_entry_offset));
+			current_struct_ptr = (PVOID)((PUCHAR)current_struct_ptr + *(current_info.next_entry_offset));
 			current_info = get_next_entry_offset_and_file_name(current_struct_ptr, FileInformationClass);
 
 		}
@@ -218,7 +218,7 @@ BOOLEAN check_file(wchar_t* file)
 void extract_file_name(wchar_t* buffer, PUNICODE_STRING FileName_argument)
 {
 	RtlCopyMemory((PWCHAR)buffer, (PWCHAR) & (FileName_argument->Buffer), (size_t)FileName_argument->Length);
-	*((PWCHAR)((PBYTE)buffer + FileName_argument->Length)) = L'\0';
+	*((PWCHAR)((PUCHAR)buffer + FileName_argument->Length)) = L'\0';
 
 }
 
@@ -229,10 +229,7 @@ void iterate_files_on_buffer(PVOID file_information_buffer,FILE_INFORMATION_CLAS
 	while (*(current_info.next_entry_offset) != 0)
 	{
 		DbgPrint("filename: %ws \n", current_info.file_name);
-		current_struct_ptr = (PVOID)((PBYTE)current_struct_ptr + *(current_info.next_entry_offset));
-		current_info = get_next_entry_offset_and_file_name(current_struct_ptr, file_information_class);
-	}
-
+			current_struct_ptr = (PVOID)((PUCHAR)current_struct_ptr + *(current_info.next_entry_offset));
 }
 
 BOOLEAN check_files_on_buffer(PVOID file_information_buffer, FILE_INFORMATION_CLASS file_information_class)

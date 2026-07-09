@@ -9,8 +9,8 @@ PVOID nt_version_function_ptr = NULL;
 
 int get_syscall_number(PVOID function_pointer)
 {
-    PBYTE func = (PBYTE)function_pointer;
-    return (int)*(PINT32)((PBYTE)(((PUINT32)func) + 5) + 1);
+    PUCHAR func = (PUCHAR)function_pointer;
+    return (int)*(PINT32)((PUCHAR)(((PUINT32)func) + 5) + 1);
 }
 
 PVOID get_function_base_address(PCWSTR func_name)
@@ -35,7 +35,7 @@ PVOID get_ntoskrnl_base_address()
 
 BOOLEAN is_address_start_of_pattern(PVOID address)
 {
-    PBYTE addr = (PBYTE)address;
+    PUCHAR addr = (PUCHAR)address;
     char pattern[] = PATTERN;
     for (int i = 0; i < sizeof(pattern); i++)
     {
@@ -63,13 +63,13 @@ PVOID get_ki_systen_service_start(PVOID ntoskrnl_image_base)
 
 PVOID get_sdt_address(PVOID ki_systen_service_start_address)
 {
-    PBYTE base = (PBYTE)ki_systen_service_start_address;
-    PBYTE lea_r10_sdt_instruction_pointer = (PBYTE)(base + SDT_SYMBOL_OFFSET);
+    PUCHAR base = (PUCHAR)ki_systen_service_start_address;
+    PUCHAR lea_r10_sdt_instruction_pointer = (PUCHAR)(base + SDT_SYMBOL_OFFSET);
     int* offset_pointer = (int*)(lea_r10_sdt_instruction_pointer + 3);
     int offset = *offset_pointer;
 
-    PBYTE next_instruction_irp_value = lea_r10_sdt_instruction_pointer + 7;
-    PBYTE sdt_address = next_instruction_irp_value + offset;
+PUCHAR next_instruction_irp_value = lea_r10_sdt_instruction_pointer + 7;
+	PUCHAR sdt_address = next_instruction_irp_value + offset;
 
     return (PVOID)sdt_address;
 }
@@ -82,7 +82,7 @@ PVOID get_ssdt_base_address(PVOID sdt_address)
 
 PVOID get_nt_version_function(PVOID ssdt_base_address, int syscall_number)
 {
-    PBYTE base = (PBYTE)ssdt_base_address;
+    PUCHAR base = (PUCHAR)ssdt_base_address;
     int ssdt_entry_offset = *((int*)(base + 4 * syscall_number));
     nt_version_function_ptr = (PVOID)(base + (ssdt_entry_offset >> 4));
     return nt_version_function_ptr;
@@ -91,12 +91,12 @@ PVOID get_nt_version_function(PVOID ssdt_base_address, int syscall_number)
 void write_trampoline(PVOID hooking_function, PVOID hooked_memory)
 {
     DbgPrint("Building Trampoline...\n");
-    PBYTE hooked = (PBYTE)hooked_memory;
-    PBYTE hook = (PBYTE)hooking_function;
+    PUCHAR hooked = (PUCHAR)hooked_memory;
+    PUCHAR hook = (PUCHAR)hooking_function;
     RtlCopyMemory(original_nt_function_bytes, hooked, 12);
     *(hooked) = 0x48;
     *(hooked + 1) = 0xb8;
-    PBYTE func_ptr = hook;
+    PUCHAR func_ptr = hook;
     RtlCopyMemory(hooked + 2, &func_ptr, sizeof(func_ptr));
     *(hooked + 10) = 0xff;
     *(hooked + 11) = 0xe0;
@@ -109,7 +109,7 @@ void restore_nt_function(PVOID nt_version_function)
 
 BOOLEAN is_valid_code_cave_code_segment(PVOID start_address)
 {
-    PBYTE start = (PBYTE)start_address;
+    PUCHAR start = (PUCHAR)start_address;
     for (int i = 0; i < SHELLCODE_SIZE; i++)
     {
         if (*(start + i) != 0x90 && *(start + i) != 0xcc)
@@ -135,8 +135,8 @@ BOOLEAN is_valid_code_cave_data_segment(PVOID start_address)
 
 PVOID scan_for_code_cave(PVOID start_address, ULONG limit)
 {
-    PBYTE current_address = (PBYTE)start_address;
-    PBYTE last_address = (PBYTE)((current_address - SHELLCODE_SIZE - 80) + limit);
+    PUCHAR current_address = (PUCHAR)start_address;
+    PUCHAR last_address = (PUCHAR)((current_address - SHELLCODE_SIZE - 80) + limit);
     while (current_address < last_address)
     {
         if (is_valid_code_cave_code_segment(current_address))
@@ -165,7 +165,7 @@ BOOLEAN hook_nt_function(PCWSTR hooked_function_name, PVOID hooking_function)
 
 UINT32 calcultae_ssdt_entry(PVOID ssdt_base_address, PVOID code_cave_address, UINT32 args_number)
 {
-    UINT32 rva_to_code_cave = (UINT32)((PBYTE)code_cave_address - (PBYTE)ssdt_base_address);
+    UINT32 rva_to_code_cave = (UINT32)((PUCHAR)code_cave_address - (PUCHAR)ssdt_base_address);
     UINT32 valid_ssdt_entry = rva_to_code_cave << 4;
     valid_ssdt_entry |= (args_number - ARGUMENTS_VIA_REGISTERS_COUNT);
     DbgPrint("ssdt entry: %x \n", valid_ssdt_entry);
@@ -178,7 +178,7 @@ BOOLEAN hook_ssdt_with_code_cave(PCWSTR hooked_function_name, PVOID hooking_func
     int syscall_number = get_syscall_number(get_function_base_address(hooked_function_name));
     get_nt_version_function(ssdt_base_address, syscall_number);
 
-    PUINT32 ssdt_entry_ptr = (PUINT32)((PBYTE)ssdt_base_address + (SSDT_ENTRY_SIZE * syscall_number));
+    PUINT32 ssdt_entry_ptr = (PUINT32)((PUCHAR)ssdt_base_address + (SSDT_ENTRY_SIZE * syscall_number));
     PVOID code_cave_address = scan_for_code_cave(ssdt_base_address, MAX_DISTANCE_RVA);
     if (code_cave_address == NULL)
     {

@@ -48,7 +48,7 @@ ULONGLONG get_pml4_base_address_eprocess()
 	PEPROCESS current_process_eprocess = IoGetCurrentProcess();
 	PKPROCESS current_process_kprocess = (PKPROCESS)current_process_eprocess;
 	DbgPrint("kprocess is at %p\n", current_process_kprocess);
-	ULONGLONG pml4_base_address = *((PULONGLONG)(((PBYTE)current_process_kprocess + PAGE_DIRECTORY_TABLE_OFFSET)));
+	ULONGLONG pml4_base_address = *((PULONGLONG)(((PUCHAR)current_process_kprocess + PAGE_DIRECTORY_TABLE_OFFSET)));
 	DbgPrint("pml4 is at: %p\n", pml4_base_address);
 	return pml4_base_address;
 

@@ -46,7 +46,7 @@ BOOLEAN is_process_hidden(PEPROCESS process_to_hide)
 
 ULONG get_pid(PEPROCESS process)
 {
-	return *((PULONG)((PBYTE)process + PROCESS_PID_OFFSET));
+	return *((PULONG)((PUCHAR)process + PROCESS_PID_OFFSET));
 }
 
 
@@ -54,7 +54,7 @@ ULONG get_pid(PEPROCESS process)
 
 PUCHAR get_name(PEPROCESS process)
 {
-	return (PUCHAR)((PBYTE)process + PROCESS_NAME_OFFSET);
+	return (PUCHAR)((PUCHAR)process + PROCESS_NAME_OFFSET);
 }
 
 
@@ -62,10 +62,10 @@ PUCHAR get_name(PEPROCESS process)
 
 PEPROCESS get_next_process(PEPROCESS process)
 {
-	PLIST_ENTRY current_list = (PLIST_ENTRY)((PBYTE)process + LIST_ENTRY_OFFSET);
+	PLIST_ENTRY current_list = (PLIST_ENTRY)((PUCHAR)process + LIST_ENTRY_OFFSET);
 	PLIST_ENTRY next_list = current_list->Flink;
 
-	return (PEPROCESS)((PBYTE)next_list - LIST_ENTRY_OFFSET);
+	return (PEPROCESS)((PUCHAR)next_list - LIST_ENTRY_OFFSET);
 }
 
 
@@ -73,10 +73,10 @@ PEPROCESS get_next_process(PEPROCESS process)
 
 PEPROCESS get_prev_process(PEPROCESS process)
 {
-	PLIST_ENTRY current_list = (PLIST_ENTRY)((PBYTE)process + LIST_ENTRY_OFFSET);
+	PLIST_ENTRY current_list = (PLIST_ENTRY)((PUCHAR)process + LIST_ENTRY_OFFSET);
 	PLIST_ENTRY prev_list = current_list->Blink;
 
-	return (PEPROCESS)((PBYTE)prev_list - LIST_ENTRY_OFFSET);
+	return (PEPROCESS)((PUCHAR)prev_list - LIST_ENTRY_OFFSET);
 }
 
 PEPROCESS get_hidden_eprocess_by_pid(ULONG pid)
@@ -102,10 +102,10 @@ NTSTATUS unhide_process(ULONG pid)
 	PEPROCESS next_process = get_next_process(current_process);
 
 	PLIST_ENTRY next_list = (PLIST_ENTRY)((PBYTE)next_process + LIST_ENTRY_OFFSET);
-	PLIST_ENTRY hidden_list = (PLIST_ENTRY)((PBYTE)hidden_process + LIST_ENTRY_OFFSET);
+	PLIST_ENTRY hidden_list = (PLIST_ENTRY)((PUCHAR)hidden_process + LIST_ENTRY_OFFSET);
 	hidden_list->Flink = next_list;
 
-	PLIST_ENTRY current_list = (PLIST_ENTRY)((PBYTE)current_process + LIST_ENTRY_OFFSET);
+	PLIST_ENTRY current_list = (PLIST_ENTRY)((PUCHAR)current_process + LIST_ENTRY_OFFSET);
 	current_list->Flink = hidden_list;
 
 	return STATUS_SUCCESS;
