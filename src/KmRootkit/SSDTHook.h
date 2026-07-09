@@ -18,7 +18,7 @@
 
 extern PBYTE nt_version_function_ptr;
 
-typedef NTSYSAPI PVOID (*prtl_pc_to_file_header)(PVOID PcValue, PVOID* BaseOfImage), rtl_pc_to_file_header(PVOID PcValue, PVOID* BaseOfImage);
+typedef NTSYSAPI PVOID (*prtl_pc_to_file_header)(PVOID PcValue, PVOID* BaseOfImage);
 
 
 typedef struct system_descriptor_table

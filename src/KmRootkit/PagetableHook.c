@@ -49,3 +49,15 @@ ULONGLONG get_pml4_base_address_eprocess()
 	return pml4_base_address;
 
 }
+
+void parse_virtual_address(PBYTE virtual_address)
+{
+	virtual_address_parts* parts = (virtual_address_parts*)virtual_address;
+	DbgPrint("Virtual Address: %p\n", virtual_address);
+	DbgPrint("Sign Extended: %d\n", parts->sign_extended);
+	DbgPrint("PML4 Offset: %d\n", parts->pml4_offset);
+	DbgPrint("Page Directory Pointer Offset: %d\n", parts->page_directory_pointer_offset);
+	DbgPrint("Page Directory Offset: %d\n", parts->page_directory_offset);
+	DbgPrint("Page Table Offset: %d\n", parts->page_table_offset);
+	DbgPrint("Page Offset: %d\n", parts->page_offset);
+}

@@ -68,6 +68,7 @@ typedef void (*PIO_APC_ROUTINE)(void);
 #define IN
 #define OUT
 #define WINAPI
+#define NULL 0
 
 #define DbgPrint(...) ((void)0)
 #define UNREFERENCED_PARAMETER(x) ((void)(x))
@@ -95,6 +96,16 @@ static inline void ExFreePool(void* buffer_ptr) { free(buffer_ptr); }
 #define NonPagedPool 0
 #define PAGE_EXECUTE_READWRITE 0
 #define KernelMode 0
+#define POOL_FLAG_NON_PAGED 0x0000000000000001ULL
+
+typedef struct _MDL {
+	struct _MDL *Next;
+	SHORT Size;
+	SHORT MdlFlags;
+	ULONGLONG StartVa;
+	ULONG ByteCount;
+	ULONG ByteOffset;
+} MDL, *PMDL;
 
 static inline unsigned long long __readcr3(void) { return 0; }
 static inline unsigned long long __readcr4(void) { return 0; }
@@ -109,5 +120,11 @@ static inline void _enable(void) { }
 
 #define STATUS_SUCCESS 0
 #define STATUS_FAILED_DRIVER_ENTRY 0xC0000001
+#define STATUS_NO_SUCH_FILE 0xC000000F
+#define STANDARD_RIGHTS_REQUIRED 0x000F0000
+
+#define UNREACHABLE() { __asm__("ud2"); }
+#define __pragma(x)
+#define __declspec(x)
 
 #endif
