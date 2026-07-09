@@ -12,7 +12,7 @@
 #pragma pack(push, 1)
 typedef struct idtr {
 	UINT16 limit;
-	PBYTE base_address;
+	PVOID base_address;
 }idtr, *pidtr;
 
 

@@ -5,14 +5,12 @@
 #include <wdm.h>
 #include "Driver.h"
 
-extern void parse_virtual_address(PBYTE virtual_address);
-
 NTSTATUS DriverEntry(PDRIVER_OBJECT pDriverObject, PUNICODE_STRING RegistryPath)
 {
 	x64_deprotect();
 	get_pml4_base_address_cr3();
 	get_pml4_base_address_eprocess();
-	parse_virtual_address((PBYTE)0xfffff8034ac05000);
+	parse_virtual_address((PVOID)0xfffff8034ac05000);
 	return STATUS_SUCCESS;
 }
 

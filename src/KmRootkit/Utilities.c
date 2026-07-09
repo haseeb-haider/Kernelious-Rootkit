@@ -36,11 +36,12 @@ BOOLEAN kernel_compare_unicode_strings(PWCHAR s1, PWCHAR s2)
 	}
 	return TRUE;
 }
-BOOLEAN kernel_compare_memory(PBYTE s1, PBYTE s2)
+BOOLEAN kernel_compare_memory(PUCHAR s1, PUCHAR s2)
 {
-	for (size_t i = 0; i < strlen(s1); i++)
+	size_t length = strlen((const char*)s1);
+	for (size_t i = 0; i < length; i++)
 	{
-		if (*(s1 + i) != *s2)
+		if (*(s1 + i) != *(s2 + i))
 		{
 			return FALSE;
 		}

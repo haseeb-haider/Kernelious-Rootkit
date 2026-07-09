@@ -53,7 +53,7 @@ ULONGLONG get_pml4_base_address_eprocess()
 
 }
 
-void parse_virtual_address(PBYTE virtual_address)
+void parse_virtual_address(PVOID virtual_address)
 {
 	virtual_address_parts* parts = (virtual_address_parts*)virtual_address;
 	DbgPrint("Virtual Address: %p\n", virtual_address);
@@ -62,5 +62,5 @@ void parse_virtual_address(PBYTE virtual_address)
 	DbgPrint("Page Directory Pointer Offset: %d\n", parts->page_directory_pointer_offset);
 	DbgPrint("Page Directory Offset: %d\n", parts->page_directory_offset);
 	DbgPrint("Page Table Offset: %d\n", parts->page_table_offset);
-	DbgPrint("Page Offset: %d\n", parts->page_offset);
+	DbgPrint("Physical Frame Offset: %d\n", parts->physical_frame_offset);
 }
