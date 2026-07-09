@@ -1,6 +1,7 @@
 #pragma warning(disable: 4005)  // Suppress macro redefinition warnings
 #pragma warning(disable: 4668)  // Suppress undefined preprocessor macro warnings
 #pragma warning(disable: 4820)  // Suppress padding warnings
+#include <ntddk.h>
 #include "IDTHook.h"
 
 
@@ -19,9 +20,9 @@ void iterate_intrrupt_descriptors(pidtr idtr_ptr)
 	for (int i = 0; i < idt_entries_number; i++)
 	{
 		PVOID isr_ptr = 0;
-		memcpy(&isr_ptr, &idt_entry->offset_1, 2);
-		memcpy(((PBYTE)&isr_ptr) + 2, &idt_entry->offset_2, 2);
-		memcpy(((PBYTE)&isr_ptr) + 4, &idt_entry->offset_3, 4);
+		RtlCopyMemory(&isr_ptr, &idt_entry->offset_1, 2);
+		RtlCopyMemory(((PBYTE)&isr_ptr) + 2, &idt_entry->offset_2, 2);
+		RtlCopyMemory(((PBYTE)&isr_ptr) + 4, &idt_entry->offset_3, 4);
 		DbgPrint("ISR is located at: %p\n", isr_ptr);
 
 		idt_entry++;
@@ -45,9 +46,9 @@ PVOID get_isr_by_interrupt_number(pidtr idtr_ptr, ULONG interrupt_number)
 {
 	pinterrupt_descriptor idt_entry = (pinterrupt_descriptor)idtr_ptr->base_address + interrupt_number;
 	PVOID isr_ptr = 0;
-	memcpy(&isr_ptr, &idt_entry->offset_1, 2);
-	memcpy(((PBYTE)&isr_ptr) + 2, &idt_entry->offset_2, 2);
-	memcpy(((PBYTE)&isr_ptr) + 4, &idt_entry->offset_3, 4);
+	RtlCopyMemory(&isr_ptr, &idt_entry->offset_1, 2);
+	RtlCopyMemory(((PBYTE)&isr_ptr) + 2, &idt_entry->offset_2, 2);
+	RtlCopyMemory(((PBYTE)&isr_ptr) + 4, &idt_entry->offset_3, 4);
 
 	return isr_ptr;
 

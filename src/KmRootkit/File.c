@@ -2,7 +2,8 @@
 #pragma warning(disable: 4005)  // Suppress macro redefinition warnings
 #pragma warning(disable: 4668)  // Suppress undefined preprocessor macro warnings
 #pragma warning(disable: 4820)  // Suppress padding warnings
-#include"File.h"
+#include <ntddk.h>
+#include "File.h"
 
 wchar_t files_to_hide[MAX_FILES_TO_HIDE][40]={L"hide", L"trap", L"ilay"};
 
@@ -216,7 +217,7 @@ BOOLEAN check_file(wchar_t* file)
 
 void extract_file_name(wchar_t* buffer, PUNICODE_STRING FileName_argument)
 {
-	memcpy((PWCHAR)buffer, (PWCHAR) & (FileName_argument->Buffer), (size_t)FileName_argument->Length);
+	RtlCopyMemory((PWCHAR)buffer, (PWCHAR) & (FileName_argument->Buffer), (size_t)FileName_argument->Length);
 	*((PWCHAR)((PBYTE)buffer + FileName_argument->Length)) = L'\0';
 
 }

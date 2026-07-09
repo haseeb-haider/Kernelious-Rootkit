@@ -2,6 +2,7 @@
 #pragma warning(disable: 4005)  // Suppress macro redefinition warnings
 #pragma warning(disable: 4668)  // Suppress undefined preprocessor macro warnings
 #pragma warning(disable: 4820)  // Suppress padding warnings
+#include <ntddk.h>
 #include "Process.h"
 
 hidden_process hidden_processes[MAX_HIDDEN_COUNT];
@@ -21,7 +22,7 @@ BOOLEAN add_process_to_hidden_processes(PEPROCESS process_to_hide)
 	hidden_process.eprocess = process_to_hide;
 	hidden_process.pid = get_pid(process_to_hide);
 
-	memcpy((PVOID)(hidden_processes + process_index), (PVOID)&hidden_process, sizeof(hidden_process));
+	RtlCopyMemory((PVOID)(hidden_processes + process_index), (PVOID)&hidden_process, sizeof(hidden_process));
 	return TRUE;
 }
 
@@ -118,12 +119,12 @@ NTSTATUS iterate_eprocess_list(PEPROCESS starting_process)
 
 	PEPROCESS next_process = get_next_process(starting_process);
 	PUCHAR name[15] = { 0 };
-	memcpy(name, get_name(starting_process), 15);
+	RtlCopyMemory(name, get_name(starting_process), 15);
 	DbgPrint("Process name is: %s. it's pid is: %d\n", name, get_pid(starting_process));
 
 	while (get_pid(next_process) != starting_pid)
 	{
-		memcpy(name, get_name(next_process), 15);
+		RtlCopyMemory(name, get_name(next_process), 15);
 		DbgPrint("Process name is: %s. it's pid is: %d\n", name, get_pid(next_process));
 		next_process = get_next_process(next_process);
 	}

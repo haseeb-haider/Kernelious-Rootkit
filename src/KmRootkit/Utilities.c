@@ -1,6 +1,7 @@
 #pragma warning(disable: 4005)  // Suppress macro redefinition warnings
 #pragma warning(disable: 4668)  // Suppress undefined preprocessor macro warnings
 #pragma warning(disable: 4820)  // Suppress padding warnings
+#include <ntddk.h>
 #include "Utilities.h"
 
 void kernel_sleep(long time_interval_sec)
@@ -51,6 +52,6 @@ BOOLEAN kernel_compare_memory(PUCHAR s1, PUCHAR s2)
 }
 void kernel_memory_move(PVOID dst, PVOID src, size_t size)
 {
-	memmove(dst, src, size);
+	RtlMoveMemory(dst, src, size);
 }
  
