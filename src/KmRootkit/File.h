@@ -5,8 +5,6 @@
 #pragma warning(disable: 4668)  // Suppress undefined preprocessor macro warnings
 #pragma warning(disable: 4820)  // Suppress padding warnings
 #ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
 #include<ntddk.h>
 #include<wdm.h>
 #include <ntimage.h>
