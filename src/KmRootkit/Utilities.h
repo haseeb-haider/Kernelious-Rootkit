@@ -13,6 +13,6 @@
 void kernel_sleep(long time_interval_sec);
 PVOID kernel_malloc(size_t size);
 BOOLEAN kernel_compare_memory(PUCHAR s1, PUCHAR s2);
-BOOLEAN kernel_compare_unicode_strings(PWCHAR s1, PWCHAR s2);
+BOOLEAN kernel_compare_unicode_strings(wchar_t* s1, wchar_t* s2);
 void kernel_memory_move(PVOID dst, PVOID src, size_t size);
 

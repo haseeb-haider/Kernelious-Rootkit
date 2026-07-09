@@ -21,10 +21,10 @@ void kernel_free(PVOID buffer_ptr)
 	ExFreePool(buffer_ptr);
 
 }
-BOOLEAN kernel_compare_unicode_strings(PWCHAR s1, PWCHAR s2)
+BOOLEAN kernel_compare_unicode_strings(wchar_t* s1, wchar_t* s2)
 {
-	PWCHAR first = s1;
-	PWCHAR second = s2;
+	wchar_t* first = s1;
+	wchar_t* second = s2;
 	while (*first != L'\0')
 	{
 		if (*first != *second)

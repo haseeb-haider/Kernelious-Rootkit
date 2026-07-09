@@ -22,7 +22,7 @@ void print_sysenter_msrs()
     DbgPrint("msrs status=>> STAR: %p, CSTAR: %p, LSTAR: %p, SFMASK: %p\n", sysenter_msrs.STAR, sysenter_msrs.CSTAR, sysenter_msrs.LSTAR, sysenter_msrs.SFMASK);
 }
 
-void hook_sysenter_instruction(PBYTE hooking_function)
+void hook_sysenter_instruction(PVOID hooking_function)
 {
     _disable();
     original_lstar = __readmsr(LSTAR_NUMBER);

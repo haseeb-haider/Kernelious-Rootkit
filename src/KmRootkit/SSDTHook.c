@@ -3,24 +3,25 @@
 #pragma warning(disable: 4005)  // Suppress macro redefinition warnings
 #include "SSDTHook.h"
 
-char original_nt_function_bytes[12] = { 0 }; 
+char original_nt_function_bytes[12] = { 0 };
 PVOID nt_version_function_ptr = NULL;
 
-int get_syscall_number(PBYTE function_pointer)
+int get_syscall_number(PVOID function_pointer)
 {
-	return (int)*(PINT32)((PBYTE)( ((PUINT32)function_pointer) + 5) + 1);
+	PBYTE func = (PBYTE)function_pointer;
+	return (int)*(PINT32)((PBYTE)( ((PUINT32)func) + 5) + 1);
 }
 
-PBYTE get_function_base_address(PCWSTR func_name)
+PVOID get_function_base_address(PCWSTR func_name)
 {
 	UNICODE_STRING func_unicode_string = { 0 };
 	RtlInitUnicodeString(&func_unicode_string, func_name);
 
-	return (PBYTE)MmGetSystemRoutineAddress(&func_unicode_string);
+	return (PVOID)MmGetSystemRoutineAddress(&func_unicode_string);
 }
 
 
-PBYTE get_ntoskrnl_base_address()
+PVOID get_ntoskrnl_base_address()
 {
 	PVOID ntoskrnl_base_address;
 	UNICODE_STRING pc_to_file_header_string;
@@ -29,15 +30,16 @@ PBYTE get_ntoskrnl_base_address()
 	prtl_pc_to_file_header rtl_pc_to_file_header_function = (prtl_pc_to_file_header)MmGetSystemRoutineAddress(&pc_to_file_header_string);
 	rtl_pc_to_file_header_function((PVOID)&ZwQueryKey, &ntoskrnl_base_address);
 
-	return (PBYTE)ntoskrnl_base_address;
+	return ntoskrnl_base_address;
 }
 
-BOOLEAN is_address_start_of_pattern(PBYTE address)
+BOOLEAN is_address_start_of_pattern(PVOID address)
 {
+	PBYTE addr = (PBYTE)address;
 	char pattern[] = PATTERN;
 	for (int i = 0; i < sizeof(pattern); i++)
 	{
-		if ( (char)* (pattern + i) !=  (char)* ((PBYTE)(address + i)))
+		if ((char)*(pattern + i) != (char)*(addr + i))
 		{
 			return FALSE;
 		}
@@ -45,70 +47,76 @@ BOOLEAN is_address_start_of_pattern(PBYTE address)
 	return TRUE;
 }
 
-PBYTE get_ki_systen_service_start(PBYTE ntoskrnl_image_base)
+PVOID get_ki_systen_service_start(PVOID ntoskrnl_image_base)
 {
+	PBYTE base = (PBYTE)ntoskrnl_image_base;
 	int i = 0;
 	while (TRUE)
 	{
-		if (is_address_start_of_pattern((PBYTE)(ntoskrnl_image_base +i)))
+		if (is_address_start_of_pattern((PVOID)(base + i)))
 		{
-			return ntoskrnl_image_base + i;
+			return (PVOID)(base + i);
 		}
 		i++;
 	}
 }
 
 
-PBYTE get_sdt_address(PBYTE ki_systen_service_start_address)
+PVOID get_sdt_address(PVOID ki_systen_service_start_address)
 {
-	PBYTE lea_r10_sdt_instruction_pointer = (PBYTE)(ki_systen_service_start_address + SDT_SYMBOL_OFFSET);
+	PBYTE base = (PBYTE)ki_systen_service_start_address;
+	PBYTE lea_r10_sdt_instruction_pointer = (PBYTE)(base + SDT_SYMBOL_OFFSET);
 	int* offset_pointer = (int*)(lea_r10_sdt_instruction_pointer + 3);
 	int offset = *offset_pointer;
 
 	PBYTE next_instruction_irp_value = lea_r10_sdt_instruction_pointer + 7;
 	PBYTE sdt_address = next_instruction_irp_value + offset;
 
-	return sdt_address;
+	return (PVOID)sdt_address;
 }
 
 
-PBYTE get_ssdt_base_address(PBYTE sdt_address)
+PVOID get_ssdt_base_address(PVOID sdt_address)
 {
 	psystem_descriptor_table sdt = (psystem_descriptor_table)sdt_address;
-	return (PBYTE)sdt->system_service_descriptor_table;
+	return (PVOID)sdt->system_service_descriptor_table;
 
 }
 
-PBYTE get_nt_version_function(PBYTE ssdt_base_address, int syscall_number)
+PVOID get_nt_version_function(PVOID ssdt_base_address, int syscall_number)
 {
-	int ssdt_entry_offset = *((int*)(ssdt_base_address + 4*syscall_number));
-	nt_version_function_ptr = (PBYTE)(ssdt_base_address + (ssdt_entry_offset>>4));
+	PBYTE base = (PBYTE)ssdt_base_address;
+	int ssdt_entry_offset = *((int*)(base + 4*syscall_number));
+	nt_version_function_ptr = (PVOID)(base + (ssdt_entry_offset>>4));
 	return nt_version_function_ptr;
 }
 
-void write_trampoline(PBYTE hooking_function, PBYTE hooked_memory)
+void write_trampoline(PVOID hooking_function, PVOID hooked_memory)
 {
 	DbgPrint("Building Trampoline...\n");
-	memcpy(original_nt_function_bytes, hooked_memory, 12);
-	*(hooked_memory) = 0x48;
-	*(hooked_memory + 1) = 0xb8;
-	PBYTE func_ptr = hooking_function;
-	memcpy(hooked_memory + 2, &func_ptr, sizeof(func_ptr));
-	*(hooked_memory + 10) = 0xff;
-	*(hooked_memory + 11) = 0xe0;
+	PBYTE hooked = (PBYTE)hooked_memory;
+	PBYTE hook = (PBYTE)hooking_function;
+	memcpy(original_nt_function_bytes, hooked, 12);
+	*(hooked) = 0x48;
+	*(hooked + 1) = 0xb8;
+	PBYTE func_ptr = hook;
+	memcpy(hooked + 2, &func_ptr, sizeof(func_ptr));
+	*(hooked + 10) = 0xff;
+	*(hooked + 11) = 0xe0;
 }
 
 
-void restore_nt_function(PBYTE nt_version_function)
+void restore_nt_function(PVOID nt_version_function)
 {
 	memcpy(nt_version_function, original_nt_function_bytes, 12);
 }
 
-BOOLEAN is_valid_code_cave_code_segment(PBYTE start_address)
+BOOLEAN is_valid_code_cave_code_segment(PVOID start_address)
 {
+	PBYTE start = (PBYTE)start_address;
 	for (int i = 0; i < SHELLCODE_SIZE; i++)
 	{
-		if ( *(start_address + i) != 0x90 && *(start_address + i) != 0xcc)
+		if ( *(start + i) != 0x90 && *(start + i) != 0xcc)
 		{
 			return FALSE;
 		}
@@ -117,7 +125,7 @@ BOOLEAN is_valid_code_cave_code_segment(PBYTE start_address)
 }
 
 
-BOOLEAN is_valid_code_cave_data_segment(PBYTE start_address)
+BOOLEAN is_valid_code_cave_data_segment(PVOID start_address)
 {
 	PUINT64 zero_memory_segment = (PUINT64)start_address;
 	for (int i = 0; i < 10; i++)
@@ -130,21 +138,21 @@ BOOLEAN is_valid_code_cave_data_segment(PBYTE start_address)
 	return TRUE;
 }
 
-PBYTE scan_for_code_cave(PBYTE start_address, ULONG limit)
+PVOID scan_for_code_cave(PVOID start_address, ULONG limit)
 {
-	PBYTE current_address = start_address;
-	PBYTE last_address = (PBYTE)((start_address - SHELLCODE_SIZE - 80) + limit);
+	PBYTE current_address = (PBYTE)start_address;
+	PBYTE last_address = (PBYTE)((current_address - SHELLCODE_SIZE - 80) + limit);
 	while (current_address < last_address)
 	{
 		if (is_valid_code_cave_code_segment(current_address))
 		{
 			DbgPrint("valid code cave found in code segment: %p", current_address);
-			return current_address;
+			return (PVOID)current_address;
 		}
 		else if (is_valid_code_cave_data_segment(current_address))
 		{
 			DbgPrint("valid code cave found in data segment: %p", current_address);
-			return current_address;
+			return (PVOID)current_address;
 
 		}
 		current_address++;
@@ -155,11 +163,11 @@ PBYTE scan_for_code_cave(PBYTE start_address, ULONG limit)
 
 
 
-BOOLEAN hook_nt_function(PCWSTR hooked_function_name, PBYTE hooking_function)
+BOOLEAN hook_nt_function(PCWSTR hooked_function_name, PVOID hooking_function)
 {
-	PBYTE nt_function_address = get_nt_version_function(get_ssdt_base_address(get_sdt_address(get_ki_systen_service_start(get_ntoskrnl_base_address()))), get_syscall_number(get_function_base_address(hooked_function_name)));
+	PVOID nt_function_address = get_nt_version_function(get_ssdt_base_address(get_sdt_address(get_ki_systen_service_start(get_ntoskrnl_base_address()))), get_syscall_number(get_function_base_address(hooked_function_name)));
 	write_trampoline(nt_function_address, hooking_function);
-	
+    
 	return TRUE;
 }
 

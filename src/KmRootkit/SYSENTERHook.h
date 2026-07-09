@@ -24,5 +24,5 @@ typedef VOID (*pSysenterHandler)(VOID);
 
 sysenter_msrs get_sysenter_msrs();
 void print_sysenter_msrs();
-void hook_sysenter_instruction(PBYTE hooking_function);
+void hook_sysenter_instruction(PVOID hooking_function);
 void hooking_function_sysenter();

@@ -36,4 +36,4 @@ ULONGLONG get_pml4_base_address_cr3();
 
 ULONGLONG get_pml4_base_address_eprocess();
 
-void parse_virtual_address(PVOID virtual_address);
+NTSTATUS parse_virtual_address(PVOID virtual_address);

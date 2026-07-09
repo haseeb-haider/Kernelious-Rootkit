@@ -43,6 +43,6 @@ typedef struct idt_entry_offsets {
 
 idtr get_idt_base_address();
 void iterate_intrrupt_descriptors(pidtr idtr_ptr);
-PBYTE get_isr_by_interrupt_number(pidtr idtr_ptr, ULONG interrupt_number);
-idt_entry_offsets parse_hooking_function(PBYTE hooking_function);
-void hook_idt_entry(PBYTE hooking_function, pidtr idtr_ptr, ULONG interrupt_number);
+PVOID get_isr_by_interrupt_number(pidtr idtr_ptr, ULONG interrupt_number);
+idt_entry_offsets parse_hooking_function(PVOID hooking_function);
+void hook_idt_entry(PVOID hooking_function, pidtr idtr_ptr, ULONG interrupt_number);

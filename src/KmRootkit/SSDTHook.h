@@ -33,27 +33,27 @@ typedef struct system_descriptor_table
 
 
 
-int get_syscall_number(PBYTE function_pointer);
+int get_syscall_number(PVOID function_pointer);
 
-PBYTE get_function_base_address(PCWSTR func_name);
+PVOID get_function_base_address(PCWSTR func_name);
 
-PBYTE get_ntoskrnl_base_address();
+PVOID get_ntoskrnl_base_address();
 
-BOOLEAN is_address_start_of_pattern(PBYTE address);
+BOOLEAN is_address_start_of_pattern(PVOID address);
 
-PBYTE get_ki_systen_service_start(PBYTE ntoskrnl_image_base);
+PVOID get_ki_systen_service_start(PVOID ntoskrnl_image_base);
 
-PBYTE get_sdt_address(PBYTE ki_systen_service_start_address);
+PVOID get_sdt_address(PVOID ki_systen_service_start_address);
 
-PBYTE get_ssdt_base_address(PBYTE sdt_address);
+PVOID get_ssdt_base_address(PVOID sdt_address);
 
-PBYTE get_nt_version_function(PBYTE ssdt_base_address, int syscall_number);
+PVOID get_nt_version_function(PVOID ssdt_base_address, int syscall_number);
 
 
-void write_trampoline(PBYTE hooking_function, PBYTE hooked_memory);
+void write_trampoline(PVOID hooking_function, PVOID hooked_memory);
 
-void restore_nt_function(PBYTE nt_version_function);
+void restore_nt_function(PVOID nt_version_function);
 
-BOOLEAN hook_ssdt_with_code_cave(PCWSTR hooked_function_name, PBYTE hooking_function);
+BOOLEAN hook_ssdt_with_code_cave(PCWSTR hooked_function_name, PVOID hooking_function);
 
 extern NTSTATUS ZwProtectVirtualMemory(IN HANDLE ProcessHandle, IN PVOID* BaseAddress, IN SIZE_T* NumberOfBytesToProtect, IN ULONG NewAccessProtection, OUT PULONG OldAccessProtection);
