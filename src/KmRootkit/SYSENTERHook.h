@@ -3,14 +3,9 @@
 #pragma warning(disable: 4005)  // Suppress macro redefinition warnings
 #pragma warning(disable: 4668)  // Suppress undefined preprocessor macro warnings
 #pragma warning(disable: 4820)  // Suppress padding warnings
-#ifdef _WIN32
 #include<ntddk.h>
 #include<wdm.h>
 #include <intrin.h>
-#include "win_compat.h"
-#else
-#include "win_compat.h"
-#endif
 #pragma warning(pop)
 #define STAR_NUMBER 0xC0000081
 #define LSTAR_NUMBER 0xC0000082
