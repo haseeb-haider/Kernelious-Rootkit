@@ -1,5 +1,11 @@
-#pragma once 
+#pragma once
+#pragma warning(push)
+#pragma warning(disable: 4005)  // Suppress macro redefinition warnings
+#pragma warning(disable: 4668)  // Suppress undefined preprocessor macro warnings
+#pragma warning(disable: 4820)  // Suppress padding warnings
 #ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include<ntddk.h>
 #include<wdm.h>
 #include <ntimage.h>
@@ -7,6 +13,7 @@
 #else
 #include "win_compat.h"
 #endif
+#pragma warning(pop)
 #define PROCESS_NAME_OFFSET 0x450
 #define PROCESS_PID_OFFSET 0x2e0
 #define LIST_ENTRY_OFFSET 0x2e8

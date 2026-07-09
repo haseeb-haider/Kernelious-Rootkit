@@ -1,9 +1,10 @@
-#pragma warning (disable: 4100)
-#pragma warning (disable : 4820 4619 4668)
+#pragma warning(disable: 4100)
+#pragma warning(disable: 4820 4619 4668)
+#pragma warning(disable: 4005)  // Suppress macro redefinition warnings
 #include "SSDTHook.h"
 
 char original_nt_function_bytes[12] = { 0 }; 
-PBYTE nt_version_function_ptr = NULL;
+PVOID nt_version_function_ptr = NULL;
 
 int get_syscall_number(PBYTE function_pointer)
 {

@@ -1,5 +1,11 @@
 #pragma once
+#pragma warning(push)
+#pragma warning(disable: 4005)  // Suppress macro redefinition warnings
+#pragma warning(disable: 4668)  // Suppress undefined preprocessor macro warnings
+#pragma warning(disable: 4820)  // Suppress padding warnings
 #ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include<ntddk.h>
 #include<wdm.h>
 #include <ntimage.h>
@@ -7,6 +13,7 @@
 #else
 #include "win_compat.h"
 #endif
+#pragma warning(pop)
 #define HUN_NANO_SEC_TO_SEC 10000000
 
 void kernel_sleep(long time_interval_sec);

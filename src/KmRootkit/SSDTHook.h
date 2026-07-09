@@ -1,5 +1,11 @@
 #pragma once
+#pragma warning(push)
+#pragma warning(disable: 4005)  // Suppress macro redefinition warnings
+#pragma warning(disable: 4668)  // Suppress undefined preprocessor macro warnings
+#pragma warning(disable: 4820)  // Suppress padding warnings
 #ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include<ntddk.h>
 #include<wdm.h>
 #include <ntimage.h>
@@ -7,6 +13,7 @@
 #else
 #include "win_compat.h"
 #endif
+#pragma warning(pop)
 #define SDT_SYMBOL L"KeServiceDescriptorTable"
 #define SSDT_ENTRY_SIZE 4
 #define PATTERN {0x48,0x89,0xa3,0x90,0x00,0x00,0x00,0x8b,0xf8,0xc1,0xef,0x07};
@@ -16,7 +23,7 @@
 #define SDT_SYMBOL_OFFSET 0X14
 #define ARGUMENTS_VIA_REGISTERS_COUNT 4
 
-extern PBYTE nt_version_function_ptr;
+extern PVOID nt_version_function_ptr;
 
 typedef NTSYSAPI PVOID (*prtl_pc_to_file_header)(PVOID PcValue, PVOID* BaseOfImage);
 

@@ -1,4 +1,7 @@
-#pragma warning (disable: 4100)
+#pragma warning(disable: 4100)
+#pragma warning(disable: 4005)  // Suppress macro redefinition warnings
+#pragma warning(disable: 4668)  // Suppress undefined preprocessor macro warnings
+#pragma warning(disable: 4820)  // Suppress padding warnings
 #include "Driver.h"
 
 NTSTATUS DriverEntry(PDRIVER_OBJECT pDriverObject, PUNICODE_STRING RegistryPath)
